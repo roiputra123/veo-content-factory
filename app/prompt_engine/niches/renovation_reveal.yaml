@@ -1,6 +1,6 @@
-name: "Renovation Reveal"
+name: "Reveal Renovasi"
 slug: renovation_reveal
-description: "Before and after transformation of a property renovation"
+description: "Transformasi sebelum-sesudah renovasi properti"
 
 prompt_formula: "5-part"
 

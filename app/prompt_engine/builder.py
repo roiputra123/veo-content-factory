@@ -1,8 +1,10 @@
 import os
 
+_TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+
 class PromptBuilder:
-    def __init__(self, templates_dir="prompt_engine/templates"):
-        self.templates_dir = templates_dir
+    def __init__(self, templates_dir=None):
+        self.templates_dir = templates_dir or _TEMPLATES_DIR
 
     def load_template(self, filename):
         path = os.path.join(self.templates_dir, filename)

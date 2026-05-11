@@ -1,6 +1,6 @@
-name: "Construction Time-lapse"
+name: "Time-lapse Konstruksi"
 slug: construction_timelapse
-description: "Time-lapse of building construction from empty lot to finished structure"
+description: "Time-lapse pembangunan gedung dari lahan kosong hingga jadi"
 
 prompt_formula: "5-part"
 

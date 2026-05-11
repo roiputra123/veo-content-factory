@@ -1,6 +1,6 @@
-name: "Aerial Masterplan"
+name: "Masterplan Udara"
 slug: aerial_masterplan
-description: "Bird's eye view showcasing the entire development master plan"
+description: "Pemandangan bird's eye view yang menampilkan seluruh masterplan"
 
 prompt_formula: "5-part"
 

@@ -1,6 +1,6 @@
-name: "Virtual Staging"
+name: "Staging Virtual"
 slug: virtual_staging
-description: "Transform empty unfurnished rooms into beautifully staged living spaces"
+description: "Ubah ruangan kosong tanpa perabot menjadi ruang tamu yang tertata indah"
 
 prompt_formula: "5-part"
 

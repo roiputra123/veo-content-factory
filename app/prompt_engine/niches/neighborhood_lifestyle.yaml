@@ -1,6 +1,6 @@
-name: "Neighborhood Lifestyle"
+name: "Gaya Hidup Lingkungan"
 slug: neighborhood_lifestyle
-description: "Showcase the lifestyle and community around a residential development"
+description: "Menampilkan gaya hidup dan komunitas di sekitar perumahan"
 
 prompt_formula: "5-part"
 

@@ -1,6 +1,6 @@
-name: "Comparison Progress"
+name: "Progress Perbandingan"
 slug: comparison_progress
-description: "Multi-stage construction progress from foundation to completion"
+description: "Progress konstruksi multi-tahap dari fondasi hingga selesai"
 
 prompt_formula: "5-part"
 

@@ -1,5 +1,5 @@
 veo:
-  service_account_file: "configs/vertex_key_production.json"
+  service_account_file: "vertex_key_production.json"
   project_id: "x-victor-470014-t7"
   location: "us-central1"
 

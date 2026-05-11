@@ -1,6 +1,6 @@
-name: "Architecture Exterior"
+name: "Eksterior Arsitektur"
 slug: architecture_exterior
-description: "Showcase of building exterior, facade, and landscape architecture"
+description: "Menampilkan eksterior bangunan, fasad, dan arsitektur lansekap"
 
 prompt_formula: "5-part"
 

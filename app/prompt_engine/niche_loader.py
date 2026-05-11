@@ -1,11 +1,11 @@
 import os
 import yaml
 
-NICHES_DIR = os.path.join(os.path.dirname(__file__), "niches")
+_NICHES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "niches")
 
 class NicheLoader:
-    def __init__(self, niches_dir=NICHES_DIR):
-        self.niches_dir = niches_dir
+    def __init__(self, niches_dir=None):
+        self.niches_dir = niches_dir or _NICHES_DIR
         self._cache = {}
 
     def list_niches(self):
