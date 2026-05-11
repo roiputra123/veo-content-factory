@@ -1,10 +1,12 @@
 import json
 import os
+import time
 import yaml
 
 _DEMO_MODE = False
 try:
     from google import genai
+    from google.genai import errors as genai_errors
 except ImportError:
     _DEMO_MODE = True
 
@@ -27,67 +29,181 @@ class PromptRefiner:
         self.niche_loader = NicheLoader()
         self.logger = logger
         self.demo_mode = demo_mode
+        self.llm = None
+        self.client = None
+        self.model_id = None
+        self.model_id_pro = None
+
+        if config_path is None:
+            config_path = os.path.join(_APP_DIR, "configs", "veo_config.yaml")
+        if os.path.exists(config_path):
+            with open(config_path, 'r') as f:
+                self.config = yaml.safe_load(f)["veo"]
+            self._config_dir = os.path.dirname(os.path.abspath(config_path))
+        else:
+            self.config = None
+            self._config_dir = None
 
         if self.demo_mode is None:
-            api_key = os.environ.get("GEMINI_API_KEY")
-            sa_path = None
-            if config_path is None:
-                config_path = os.path.join(_APP_DIR, "configs", "veo_config.yaml")
-            if os.path.exists(config_path):
-                with open(config_path, 'r') as f:
-                    cfg = yaml.safe_load(f)
-                sa_path = cfg.get("veo", {}).get("service_account_file", "")
-                if not os.path.isabs(sa_path):
-                    sa_path = os.path.join(os.path.dirname(config_path), sa_path)
-            has_sa = sa_path and os.path.exists(sa_path) if sa_path else False
-            self.demo_mode = not (bool(api_key) or has_sa)
+            self._try_init_providers()
+            if self.demo_mode is None:
+                self.demo_mode = not (self.client or self.llm)
 
         if self.demo_mode and self.logger:
             self.logger.info("DEMO MODE — tanpa LLM, menggunakan template langsung")
 
-        if not self.demo_mode:
-            if config_path is None:
-                config_path = os.path.join(_APP_DIR, "configs", "veo_config.yaml")
-            self._config_dir = os.path.dirname(os.path.abspath(config_path))
+        self.max_iterations = int(os.environ.get("LLM_ITERATIONS", "3"))
 
-            with open(config_path, 'r') as f:
-                self.config = yaml.safe_load(f)["veo"]
+    def _try_init_providers(self):
+        provider = os.environ.get("LLM_PROVIDER", "").lower()
 
-            api_key = os.environ.get("GEMINI_API_KEY")
-            if api_key:
-                self.client = genai.Client(api_key=api_key)
-            else:
-                sa_path = self.config["service_account_file"]
-                if not os.path.isabs(sa_path):
-                    sa_path = os.path.join(self._config_dir, sa_path)
-                os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = sa_path
-                self.client = genai.Client(
-                    vertexai=True,
-                    project=self.config["project_id"],
-                    location=self.config["location"]
-                )
+        sa_path = None
+        if self.config:
+            sa_path = self.config.get("service_account_file", "")
+            if sa_path and not os.path.isabs(sa_path):
+                sa_path = os.path.join(self._config_dir, sa_path) if self._config_dir else sa_path
+            sa_path = sa_path if (sa_path and os.path.exists(sa_path)) else None
 
-        self.llm = None
-        provider = os.environ.get("LLM_PROVIDER", "gemini").lower()
-        if provider == "ollama":
+        # Respect explicit LLM_PROVIDER set by user
+        if provider == "openrouter":
+            self._init_openrouter()
+            if self.llm:
+                return
+        elif provider == "ollama":
+            self._init_ollama()
+            if self.llm:
+                return
+        elif provider == "gemini":
+            self._init_gemini_api()
+            if self.client:
+                return
+
+        # Auto-detect
+        if not provider or provider == "auto":
+            if self._init_gemini_api():
+                return
+            if sa_path and self._init_vertex(sa_path):
+                return
+            if self._init_openrouter():
+                return
+            if self._init_ollama():
+                return
+
+        self.demo_mode = True
+
+    def _init_gemini_api(self):
+        api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("VERTEX_API_KEY")
+        if not api_key:
+            return False
+        try:
+            self.client = genai.Client(api_key=api_key)
+            self.model_id = (self.config or {}).get("llm_model_id", "gemini-2.0-flash")
+            self.model_id_pro = (self.config or {}).get("llm_model_id_pro", "gemini-2.5-pro-preview")
+            # Health check: detect quota exhaustion at init time
+            try:
+                self.client.models.count_tokens(model=self.model_id, contents="ok")
+            except Exception as e:
+                err = str(e)
+                if "RESOURCE_EXHAUSTED" in err or "quota" in err.lower() or "429" in err:
+                    if self.logger:
+                        self.logger.warning(f"Gemini quota exhausted, skip: {err[:80]}")
+                    self.client = None
+                    return False
+            if self.client and self.logger:
+                self.logger.info(f"Gemini: {self.model_id}")
+            return self.client is not None
+        except Exception as e:
+            self.client = None
+            if self.logger:
+                self.logger.warning(f"Gagal init Gemini API: {e}")
+            return False
+
+    def _init_vertex(self, sa_path):
+        try:
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = sa_path
+            self.client = genai.Client(
+                vertexai=True,
+                project=self.config["project_id"],
+                location=self.config.get("location", "us-central1")
+            )
+            self.model_id = self.config.get("llm_model_id", "gemini-2.0-flash")
+            self.model_id_pro = self.config.get("llm_model_id_pro", "gemini-2.5-pro-preview")
+            if self.logger:
+                self.logger.info("Vertex AI via service account")
+            return True
+        except Exception as e:
+            self.client = None
+            if self.logger:
+                self.logger.warning(f"Gagal init Vertex: {e}")
+            return False
+
+    def _init_openrouter(self):
+        or_key = os.environ.get("OPENROUTER_API_KEY")
+        if not or_key:
+            return False
+        try:
+            self.llm = LLMProvider(provider="openrouter",
+                                   model=os.environ.get("LLM_MODEL", "openai/gpt-4o-mini"))
+            self.demo_mode = False
+            if self.logger:
+                self.logger.info(f"OpenRouter: {self.llm.model}")
+            return True
+        except Exception as e:
+            self.llm = None
+            if self.logger:
+                self.logger.warning(f"Gagal init OpenRouter: {e}")
+            return False
+
+    def _init_ollama(self):
+        if not os.environ.get("OLLAMA_SSH_HOST"):
+            return False
+        try:
             self.llm = LLMProvider(provider="ollama")
             self.demo_mode = False
             if self.logger:
-                self.logger.info(f"Menggunakan Ollama: {self.llm.host} model={self.llm.model}")
-        elif not self.demo_mode:
-            self.model_id = self.config.get("llm_model_id", "gemini-1.5-flash-002")
-            self.model_id_pro = self.config.get("llm_model_id_pro", "gemini-1.5-pro-002")
-
-        self.max_iterations = 3
+                self.logger.info(f"Ollama: {self.llm.host} model={self.llm.model}")
+            return True
+        except Exception as e:
+            self.llm = None
+            if self.logger:
+                self.logger.warning(f"Gagal init Ollama: {e}")
+            return False
 
     def call_llm(self, prompt, use_pro=False):
         if self.demo_mode:
             raise RuntimeError("DEMO_MODE")
+
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                return self._call_llm_once(prompt, use_pro)
+            except Exception as e:
+                err_str = str(e)
+                is_rate_limit = (
+                    "RESOURCE_EXHAUSTED" in err_str or
+                    "429" in err_str or
+                    "RATE_LIMITED" in err_str or
+                    "quota" in err_str.lower()
+                )
+                if is_rate_limit and attempt < max_retries - 1:
+                    delay = (2 ** attempt) * 10
+                    if self.logger:
+                        self.logger.warning(f"Rate limited, retry in {delay}s ({attempt+1}/{max_retries})")
+                    time.sleep(delay)
+                    continue
+                raise
+
+    def _call_llm_once(self, prompt, use_pro=False):
         if self.llm:
             temperature = 0.1 if use_pro else 0.3
-            return self.llm.generate(prompt, temperature=temperature)
+            system = None
+            if use_pro and self.llm.provider == "openrouter":
+                system = "Anda adalah ahli prompt video berkualitas tinggi. Berikan respon dalam Bahasa Inggris."
+            return self.llm.generate(prompt, temperature=temperature, system_prompt=system)
+
+        model = self.model_id_pro if use_pro else self.model_id
         response = self.client.models.generate_content(
-            model=self.model_id_pro if use_pro else self.model_id,
+            model=model,
             contents=prompt
         )
         return response.text
@@ -186,7 +302,14 @@ PROMPT TO EVALUATE:
         best_negative = self._get_negative(niche_profile, image_analysis)
         current_feedback = "Initial generation"
 
-        iterations = 1 if (self.demo_mode or self.llm) else self.max_iterations
+        if self.demo_mode:
+            iterations = 1
+        elif self.llm and self.llm.provider == "ollama":
+            iterations = min(2, self.max_iterations)
+        elif self.llm:
+            iterations = min(2, self.max_iterations)
+        else:
+            iterations = self.max_iterations
         for iteration in range(1, iterations + 1):
             if self.logger:
                 self.logger.info(f"{'[DEMO] ' if self.demo_mode else ''}Iterasi {iteration}...")

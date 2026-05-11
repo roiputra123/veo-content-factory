@@ -56,9 +56,11 @@ class LLMProvider:
             out = stdout.read().decode()
             return json.loads(out) if out else {}
 
-    def generate(self, prompt, temperature=0.3):
+    def generate(self, prompt, temperature=0.3, system_prompt=None):
         if self.provider == "ollama":
             return self._ollama_generate(prompt, temperature)
+        elif self.provider == "openrouter":
+            return self._openrouter_generate(prompt, temperature, system_prompt)
         raise ValueError(f"Unknown provider: {self.provider}")
 
     def _ollama_generate(self, prompt, temperature=0.3):
@@ -71,6 +73,36 @@ class LLMProvider:
         })
         return result.get("response", "")
 
+    def _openrouter_generate(self, prompt, temperature=0.3, system_prompt=None):
+        import requests
+        api_key = os.environ.get("OPENROUTER_API_KEY")
+        if not api_key:
+            raise ValueError("OPENROUTER_API_KEY tidak ditemukan di environment")
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": prompt})
+        resp = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": self.model,
+                "messages": messages,
+                "temperature": temperature,
+                "max_tokens": 4096,
+            },
+            timeout=120,
+        )
+        if resp.status_code == 429:
+            raise RuntimeError("OPENROUTER_RATE_LIMITED")
+        if resp.status_code != 200:
+            raise RuntimeError(f"OpenRouter error {resp.status_code}: {resp.text}")
+        data = resp.json()
+        return data["choices"][0]["message"]["content"]
+
     def chat(self, messages, temperature=0.3):
         if self.provider == "ollama":
             result = self._ollama_api("chat", {
@@ -80,4 +112,10 @@ class LLMProvider:
                 "temperature": temperature,
             })
             return result.get("message", {}).get("content", "")
+        elif self.provider == "openrouter":
+            return self._openrouter_generate(
+                messages[-1]["content"] if messages else "",
+                temperature,
+                messages[0]["content"] if messages and messages[0]["role"] == "system" else None
+            )
         raise ValueError(f"Unknown provider: {self.provider}")
