@@ -1,0 +1,40 @@
+name: "Neighborhood Lifestyle"
+slug: neighborhood_lifestyle
+description: "Showcase the lifestyle and community around a residential development"
+
+prompt_formula: "5-part"
+
+cinematography:
+  camera_default: "documentary-style following daily life"
+  angles: ["eye-level street view", "tracking alongside walking path", "first-person gateway entrance", "wide establishing shot"]
+  movements: ["slow drive down tree-lined street", "walking pace along sidewalk", "pan across community amenities", "steady glide through park"]
+  lens: "35-50mm for natural perspective, 70mm for candid moments"
+  composition: "candid framing, subject in environment, natural community scenes"
+
+subject:
+  default: "families enjoying life in a premium residential community"
+  vocabulary: ["tree-lined streets", "community park", "children playing", "jogging track", "swimming pool", "clubhouse", "playground", "barbecue area", "community garden", "walking paths", "friendly neighbors", "morning coffee", "evening stroll", "gatehouse", "security", "street lamps"]
+
+action:
+  vocabulary: ["children playing on the grass", "family walking along sidewalk", "someone jogging on the track", "people swimming", "neighbors chatting", "bicycle riding down street", "sunset stroll through park", "morning commuter walking out"]
+  speed: ["natural real-time pace", "slight slow motion for lifestyle moments", "time-lapse for sunset transitions"]
+  motion_focus: "human activity, community life, daily rhythms"
+
+context:
+  environment: ["residential neighborhood", "community park", "clubhouse area", "tree-lined streets"]
+  lighting_default: "golden hour evening, warm community lighting"
+
+style:
+  visual: "photorealistic, lifestyle photography, warm inviting tones, natural colors"
+  mood: "happy, welcoming, safe, aspirational, family-oriented"
+  color_palette: "warm golden tones, green landscape, blue sky"
+
+audio:
+  ambience: "children laughing, birds chirping, distant conversation, water splashing"
+  music: "warm acoustic guitar, light uplifting, feel-good"
+  negative_audio: "no heavy music, no sad tones, no narration"
+
+negative: "blurry, distorted, deformed, low quality, watermark, text overlay, subtitle, cartoon, empty streets, abandoned feel, cloudy gloomy weather, trash, graffiti, rundown buildings, construction noise, traffic congestion, industrial areas"
+
+duration: 8
+aspect_ratio: "16:9"

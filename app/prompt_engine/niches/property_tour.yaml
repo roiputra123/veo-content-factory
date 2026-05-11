@@ -1,0 +1,41 @@
+name: "Property Cinematic Tour"
+slug: property_tour
+description: "Cinematic walkthrough tour of a property room by room"
+
+prompt_formula: "5-part"
+
+cinematography:
+  camera_default: "smooth gimbal walkthrough, eye-level"
+  angles: ["eye-level", "low-angle for grandeur", "top-down for layout"]
+  movements: ["dolly forward through doorway", "slow pan across room", "steady glide along hallway", "push-in to focal point", "crane up from exterior"]
+  lens: "wide-angle 24mm for rooms, 50mm for detail shots"
+  composition: "rule of thirds, leading lines from doorways, symmetrical for main spaces"
+
+subject:
+  default: "a modern luxury property with spacious interiors"
+  vocabulary: ["open-plan living", "high ceilings", "marble flooring", "floor-to-ceiling windows", "modern kitchen island", "master suite", "walk-in wardrobe", "spa bathroom", "landscaped garden", "swimming pool", "terrace", "rooftop"]
+
+action:
+  vocabulary: ["camera gliding through", "natural light filling the room", "curtains gently moving", "water flowing in pool", "shadows shifting across the floor"]
+  speed: ["slow cinematic pace", "smooth 24fps motion"]
+  motion_focus: "camera movement, not subject movement"
+
+context:
+  environment: ["luxury residential property", "modern architectural interior", "professionally staged rooms"]
+  lighting_default: "soft natural light through large windows, warm interior lighting"
+  time_of_day: ["golden hour", "morning light", "blue hour exterior"]
+
+style:
+  visual: "photorealistic, cinematic real estate photography style, warm tones, high dynamic range"
+  mood: "aspirational, luxurious, welcoming, spacious"
+  color_palette: "warm neutrals, earth tones, soft whites"
+
+audio:
+  ambience: "birds chirping outside, soft wind, distant city hum"
+  music: "luxurious ambient, soft piano, warm cinematic strings"
+  negative_audio: "no dialogue, no voiceover, no narration"
+
+negative: "blurry, distorted, deformed, low quality, watermark, text overlay, subtitle, cartoon, fisheye distortion, lens flare, overexposed, underexposed, cluttered, messy, dirty, construction debris, unfinished, unrealistic materials, floating objects, unnatural shadows, chromatic aberration, grainy, noise"
+
+duration: 8
+aspect_ratio: "16:9"

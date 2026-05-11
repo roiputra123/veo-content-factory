@@ -1,0 +1,40 @@
+name: "Aerial Masterplan"
+slug: aerial_masterplan
+description: "Bird's eye view showcasing the entire development master plan"
+
+prompt_formula: "5-part"
+
+cinematography:
+  camera_default: "drone aerial shot, high altitude"
+  angles: ["top-down bird's eye", "45-degree isometric", "low flyover", "orbiting the development"]
+  movements: ["slow reveal rising from ground to aerial", "drone pan across entire development", "vertical lift revealing surroundings", "forward flight over rooftops", "orbit around the property"]
+  lens: "wide aerial lens, 16mm equivalent"
+  composition: "overall site in frame, development surrounded by context, master plan layout visible"
+
+subject:
+  default: "a master-planned residential community from above"
+  vocabulary: ["master plan", "development layout", "housing clusters", "road network", "green spaces", "recreation areas", "lake", "central park", "swimming pool complex", "clubhouse", "entrance gate", "boundary wall", "surrounding landscape", "mountains in distance", "city skyline", "infrastructure", "drainage", "solar panels on roofs"]
+
+action:
+  vocabulary: ["sunlight moving across the development", "shadows of buildings shifting", "cars moving along roads slowly", "clouds casting shadows on the ground"]
+  speed: ["slow majestic reveal", "time-lapse for lighting"]
+  motion_focus: "developer perspective, macro-scale changes"
+
+context:
+  environment: ["large residential development", "surrounded by nature or city", "master-planned community"]
+  lighting_default: "golden hour for warm shadows, blue hour for lit windows"
+
+style:
+  visual: "photorealistic, satellite imagery style, crisp clear detail, 3D master plan visualization"
+  mood: "impressive, large-scale, organized, premium development"
+  color_palette: "natural landscape colors, warm roofs, green amenities"
+
+audio:
+  ambience: "wind, distant city hum, birds from far above"
+  music: "epic cinematic orchestral, inspiring, grand scale"
+  negative_audio: "no dialogue, no voiceover"
+
+negative: "blurry, distorted, deformed, low quality, watermark, text overlay, subtitle, cartoon, unrealistic scale, toy-like houses, low resolution, pixelated, incomplete areas, construction equipment visible, bare dirt, unfinished roads, empty barren land"
+
+duration: 8
+aspect_ratio: "16:9"

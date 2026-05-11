@@ -1,0 +1,41 @@
+name: "Architecture Exterior"
+slug: architecture_exterior
+description: "Showcase of building exterior, facade, and landscape architecture"
+
+prompt_formula: "5-part"
+
+cinematography:
+  camera_default: "slow orbit around building exterior"
+  angles: ["low-angle emphasizing height and grandeur", "worm's eye view of facade", "aerial top-down", "45-degree hero shot", "straight-on elevation"]
+  movements: ["slow orbit around the building", "crane up from ground to roof", "dolly across the front facade", "drone flyover from above", "tracking shot along the property line"]
+  lens: "wide-angle 16-24mm for full building, 70-200mm for compressed architectural detail"
+  composition: "symmetrical for formal architecture, rule of thirds for modern, leading lines from driveway/walkway"
+
+subject:
+  default: "a stunning architectural exterior with sophisticated design"
+  vocabulary: ["facade", "roofline", "columns", "portico", "balcony", "terrace", "glass curtain wall", "stone cladding", "wood accent", "landscape lighting", "driveway", "lawn", "hedges", "pool", "outdoor kitchen", "patio", "garage door", "front door", "window grid", "eaves", "soffit"]
+
+action:
+  vocabulary: ["sunlight moving across the facade", "shadows shifting with time", "water feature flowing", "wind through landscaping", "clouds reflecting in windows"]
+  speed: ["slow cinematic pace", "time-lapse for lighting changes", "smooth orbit"]
+  motion_focus: "environmental elements, lighting shifts, camera movement"
+
+context:
+  environment: ["architectural exterior in upscale neighborhood", "landscaped grounds"]
+  lighting_default: "golden hour sunset, warm facade lighting"
+  time_of_day: "golden hour, blue hour with interior lights on"
+
+style:
+  visual: "photorealistic, architectural photography, sharp lines, rich shadows, dramatic sky"
+  mood: "prestigious, impressive, grand, established"
+  color_palette: "natural stone tones, warm wood, sunset sky colors"
+
+audio:
+  ambience: "wind through trees, distant birds, water feature sounds, evening crickets"
+  music: "cinematic orchestral, majestic, sweeping"
+  negative_audio: "no dialogue, no voiceover, no traffic noise"
+
+negative: "blurry, distorted, deformed, low quality, watermark, text overlay, subtitle, cartoon, unrealistic materials, floating objects, unnatural lighting, glitch artifacts, inconsistent shadows, power lines, telephone poles, trash bins, construction debris, unfinished landscaping, bare dirt, parked cars blocking view"
+
+duration: 8
+aspect_ratio: "16:9"

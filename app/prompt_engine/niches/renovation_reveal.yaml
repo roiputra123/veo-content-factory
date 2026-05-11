@@ -1,0 +1,40 @@
+name: "Renovation Reveal"
+slug: renovation_reveal
+description: "Before and after transformation of a property renovation"
+
+prompt_formula: "5-part"
+
+cinematography:
+  camera_default: "matched shot before-afters, same position for each pair"
+  angles: ["eye-level for rooms", "low-wide to show space transformation", "detail close-ups"]
+  movements: ["slow crossfade between old and new", "dolly-in revealing the transformation", "pan from old to new side-by-side", "static comparison split-screen"]
+  lens: "standard 35-50mm for consistent perspective"
+  composition: "identical framing for before and after shots, center focus on transformed area"
+
+subject:
+  default: "a dramatic property transformation from outdated to modern luxury"
+  vocabulary: ["old kitchen demolished", "new modern kitchen installed", "bathroom gut renovation", "living room expansion", "wall removed", "open plan created", "new flooring laid", "fresh paint throughout", "modern fixtures", "custom cabinetry", "new lighting installation", "garden makeover"]
+
+action:
+  vocabulary: ["old tiles being removed", "walls being knocked down", "new cabinets being installed", "paint rolling onto walls", "flooring being laid down", "counters being fitted", "light fixtures being mounted", "space transforming from dark to bright", "clutter clearing away", "furniture moving into place"]
+  speed: ["rapid time-lapse for demolition", "smooth reveal for final result"]
+  motion_focus: "transformation, before-to-after transition"
+
+context:
+  environment: ["residential interior", "before renovation state", "construction phase", "after renovation reveal"]
+  lighting_default: "dim before lighting, bright warm after lighting"
+
+style:
+  visual: "photorealistic, interior design photography, vibrant colors in after-shots, desaturated in before-shots"
+  mood: "dramatic reveal, satisfying transformation, aspirational"
+  color_palette: "before: dull muted tones, after: warm vibrant rich colors"
+
+audio:
+  ambience: "demolition sounds transitioning to peaceful ambiance"
+  music: "dramatic reveal music, swelling crescendo at transformation moment"
+  negative_audio: "no dialogue, no voiceover"
+
+negative: "blurry, distorted, deformed, low quality, watermark, text overlay, subtitle, cartoon, unrealistic materials, floating objects, unnatural lighting, glitch artifacts, inconsistent shadows, messy construction debris in final shot, half-finished look, dirty, stained, damaged walls in after"
+
+duration: 8
+aspect_ratio: "16:9"

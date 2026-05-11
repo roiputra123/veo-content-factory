@@ -1,0 +1,41 @@
+name: "Construction Time-lapse"
+slug: construction_timelapse
+description: "Time-lapse of building construction from empty lot to finished structure"
+
+prompt_formula: "5-part"
+
+cinematography:
+  camera_default: "fixed wide-angle, same position throughout timelapse"
+  angles: ["low-angle emphasizing height", "aerial drone view", "frontal elevation", "45-degree corner view"]
+  movements: ["static camera hyper-lapse", "slow crane rise following construction", "time-lapse with camera locked off"]
+  lens: "wide-angle 16-24mm for full site view, 35mm for mid shots"
+  composition: "rule of thirds with building as focal point, leading lines from roads/foundations, before-and-after framing"
+
+subject:
+  default: "a modern building emerging from an empty construction site"
+  vocabulary: ["excavation", "foundation", "concrete pour", "steel rebar", "scaffolding", "brick walls", "glass curtain wall", "roofing", "facade cladding", "landscaping", "driveway", "pool excavation", "crane", "construction workers", "hard hats", "cement mixer", "excavator"]
+
+action:
+  vocabulary: ["foundation being excavated", "concrete pouring into forms", "scaffolding rising floor by floor", "brick walls extending upward", "glass panels being installed", "crane lifting materials", "workers moving across site", "landscaping being laid out", "building growing from ground up"]
+  speed: ["hyper-lapse fast motion", "day-to-night transitions", "clouds moving rapidly across sky"]
+  motion_focus: "construction progress, environmental changes, time passing"
+
+context:
+  environment: ["empty construction site", "residential development area", "urban infill lot"]
+  lighting_default: "golden hour to blue hour transition, time-lapse lighting changes"
+  time_of_day: "full day cycle from sunrise to sunset"
+
+style:
+  visual: "hyper-realistic, architectural visualization, sharp detail on materials, dynamic lighting shifts"
+  mood: "productive, transformative, impressive, monumental"
+  color_palette: "natural earth tones with steel grey accents"
+
+audio:
+  ambience: "construction site sounds, distant machinery, beeping trucks"
+  music: "uplifting orchestral, building crescendo, inspirational cinematic"
+  negative_audio: "no dialogue, no voiceover"
+
+negative: "blurry, distorted, deformed, low quality, watermark, text overlay, subtitle, cartoon, unrealistic materials, floating objects, unnatural lighting, glitch artifacts, inconsistent shadows, missing reflections, flat lighting, oversaturated, plastic-looking textures, animation style, CGI-looking, low polygon"
+
+duration: 8
+aspect_ratio: "16:9"

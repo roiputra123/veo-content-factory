@@ -1,0 +1,40 @@
+name: "Marketing Teaser 5s"
+slug: marketing_teaser
+description: "Short punchy 5-second teaser clip for social media reels"
+
+prompt_formula: "5-part"
+
+cinematography:
+  camera_default: "dynamic attention-grabbing shot"
+  angles: ["dramatic low-angle", "hero facade reveal", "extreme close-up on luxury detail", "fast reveal from dark to light"]
+  movements: ["fast whip pan to reveal", "quick dolly zoom", "crane up dramatically", "push-in to key feature"]
+  lens: "35mm for dramatic wide, macro for detail"
+  composition: "center framed hero shot, dramatic negative space, reveal from corner"
+
+subject:
+  default: "the most stunning feature of a luxury property"
+  vocabulary: ["grand entrance", "chandelier", "infinity pool", "panoramic view", "modern facade", "luxury kitchen", "master suite", "rooftop terrace", "imported marble", "designer staircase", "water feature", "smart home"]
+
+action:
+  vocabulary: ["camera revealing dramatically", "light flooding in", "water cascading", "doors opening to reveal", "transition from night to day"]
+  speed: ["fast energetic pace", "quick cuts implied", "high energy"]
+  motion_focus: "fast reveal, dramatic impact"
+
+context:
+  environment: ["luxury property highlight feature"]
+  lighting_default: "dramatic contrast, spotlight effect, rim lighting"
+
+style:
+  visual: "hyper-realistic, luxury advertising style, high contrast, deep blacks, punchy colors"
+  mood: "exclusive, premium, desirable, urgent"
+  color_palette: "rich deep tones, gold accents, dramatic shadows"
+
+audio:
+  ambience: "impact whoosh, dramatic reveal sound"
+  music: "powerful cinematic hit, orchestral stinger, deep bass pulse"
+  negative_audio: "no dialogue, no continuous music"
+
+negative: "blurry, distorted, deformed, low quality, watermark, text overlay, subtitle, cartoon, generic, boring, flat lighting, underexposed, cluttered frame, too much information, slow pace, unexciting, low contrast"
+
+duration: 5
+aspect_ratio: "9:16"

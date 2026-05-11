@@ -1,0 +1,26 @@
+veo:
+  service_account_file: "configs/vertex_key_production.json"
+  project_id: "x-victor-470014-t7"
+  location: "us-central1"
+
+  # TIER SYSTEM — pilih mode sesuai kebutuhan
+  # "lite"   = $0.03-0.08/sec — untuk testing / dev
+  # "fast"   = $0.08-0.12/sec — untuk draft / social media
+  # "standard" = $0.20-0.40/sec — untuk final / client
+  mode: "lite"
+
+  model_ids:
+    lite: "veo-3.1-lite-generate-001"
+    fast: "veo-3.0-fast-generate-001"
+    standard: "veo-3.1-generate-001"
+
+  # Gemini untuk prompt engineering — Flash sudah cukup, Pro wasting money
+  llm_model_id: "gemini-1.5-flash-002"
+  llm_model_id_pro: "gemini-1.5-pro-002"  # hanya untuk final refinement
+
+  default_config:
+    aspect_ratio: "16:9"
+    duration_seconds: 5
+    enhance_prompt: true
+    resolution: "720p"  # "720p" untuk dev, "1080p" untuk final
+    generate_audio: false  # false = lebih murah $0.10/sec

@@ -1,0 +1,40 @@
+name: "Interior Design Detail"
+slug: interior_design
+description: "Close-up focus on interior design elements, materials, and decor"
+
+prompt_formula: "5-part"
+
+cinematography:
+  camera_default: "slow macro-style detail shots"
+  angles: ["detail close-up", "45-degree tabletop", "eye-level art on wall", "top-down flat lay"]
+  movements: ["slow push-in to texture detail", "micro-dolly across countertop", "gentle pan over fabric texture", "static with subtle breathing"]
+  lens: "macro 100mm for textures, 50mm for room details, tilt-shift for miniature effect"
+  composition: "shallow depth of field, selective focus on hero element, negative space"
+
+subject:
+  default: "luxurious interior design details and premium materials"
+  vocabulary: ["marble countertop veining", "wood grain texture", "velvet upholstery", "brass fixtures", "crystal chandelier", "handwoven rug pattern", "ceramic tile texture", "leather finish", "silk curtains", "glass vase", "fresh flowers", "coffee table styling", "throw pillow arrangement", "art piece on wall"]
+
+action:
+  vocabulary: ["candle flame flickering", "curtains gently swaying", "water droplets on leaves", "light reflecting off crystal", "steam rising from coffee", "shadows moving across texture"]
+  speed: ["slow, meditative pace", "gentle micro-movements"]
+  motion_focus: "subtle ambient motion, texture appreciation"
+
+context:
+  environment: ["luxuriously decorated room interior", "staged living space"]
+  lighting_default: "soft warm interior lighting, natural window light, accent lighting on art"
+
+style:
+  visual: "photorealistic, interior design magazine quality, rich textures, warm tones"
+  mood: "elegant, sophisticated, calm, premium"
+  color_palette: "curated designer palette, warm neutrals with accent colors"
+
+audio:
+  ambience: "quiet luxury, soft fabric rustle, gentle breeze"
+  music: "soft classical piano, refined ambient, no beat"
+  negative_audio: "no dialogue, no energetic music, no crowd sounds"
+
+negative: "blurry, distorted, deformed, low quality, watermark, text overlay, subtitle, cartoon, plastic-looking materials, fake textures, unrealistic reflections, flat lighting, oversaturated, dirty, dusty, wrinkled fabrics, cheap-looking materials, IKEA-style, generic"
+
+duration: 5
+aspect_ratio: "16:9"

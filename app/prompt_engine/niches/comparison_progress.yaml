@@ -1,0 +1,48 @@
+name: "Comparison Progress"
+slug: comparison_progress
+description: "Multi-stage construction progress from foundation to completion"
+
+prompt_formula: "5-part"
+
+cinematography:
+  camera_default: "fixed position showing all construction stages from same angle"
+  angles: ["frontal elevation", "45-degree corner", "side profile", "aerial if available"]
+  movements: ["seamless transitions between stages", "dissolve through time", "split-screen comparison", "wipe transition from old to new"]
+  lens: "consistent focal length across all stages, 35mm"
+  composition: "identical framing for every stage for clear comparison, time stamp visual implied"
+
+subject:
+  default: "a building progressing through all construction stages"
+  vocabulary: ["stage 1: land clearing and excavation", "stage 2: foundation and concrete slab", "stage 3: structural framing and columns", "stage 4: roofing and walls", "stage 5: windows and exterior finish", "stage 6: landscaping and final"]
+  stages: [
+    "empty land with survey stakes",
+    "excavation and foundation pour",
+    "steel and concrete structure rising",
+    "roof structure and brick walls",
+    "facade cladding and glass installation",
+    "completed building with landscaping"
+  ]
+
+action:
+  vocabulary: ["land transforming stage by stage", "building rising from ground", "scaffolding appearing then disappearing", "facade being applied", "landscaping growing in"]
+  speed: ["fast transitions between stages", "hyper-lapse within each stage"]
+  motion_focus: "progress over time, stage-to-stage evolution"
+
+context:
+  environment: ["same construction site across months", "building progressing through stages"]
+  lighting_default: "consistent lighting across stages for fair comparison"
+
+style:
+  visual: "photorealistic, documentary construction style, informative clear view"
+  mood: "impressive progress, organized development, trustworthy builder"
+  color_palette: "natural construction colors, material authentic tones"
+
+audio:
+  ambience: "time passing whoosh, construction sounds fading in and out"
+  music: "steady building rhythm, progression feel, forward momentum"
+  negative_audio: "no dialogue, no voiceover"
+
+negative: "blurry, distorted, deformed, low quality, watermark, text overlay, subtitle, cartoon, inconsistent camera angle, different times of day, jumping cuts, missing stages, unrealistic construction speed, floating materials, incomplete structure"
+
+duration: 8
+aspect_ratio: "16:9"

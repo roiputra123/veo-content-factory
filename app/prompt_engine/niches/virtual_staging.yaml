@@ -1,0 +1,40 @@
+name: "Virtual Staging"
+slug: virtual_staging
+description: "Transform empty unfurnished rooms into beautifully staged living spaces"
+
+prompt_formula: "5-part"
+
+cinematography:
+  camera_default: "matched shot empty vs staged, same position"
+  angles: ["eye-level room entry", "corner view showing full room", "wide establishing for context"]
+  movements: ["slow dissolve from empty to furnished", "camera staying static as room transforms", "gentle pan across newly staged space"]
+  lens: "wide-angle 24mm for full room, 50mm for vignette"
+  composition: "same framing for before and after, furniture arranged in rule of thirds"
+
+subject:
+  default: "an empty room transforming into a beautifully furnished living space"
+  vocabulary: ["empty room", "bare walls", "concrete floor", "furniture appearing", "sofa", "coffee table", "dining table", "bed with linens", "wardrobe", "lamp", "rug", "curtains", "art on wall", "plants", "decorative pillows", "centre pieces", "bookshelf styling"]
+
+action:
+  vocabulary: ["furniture fading into place", "rug rolling out on floor", "curtains falling into place", "art appearing on walls", "lights turning on", "room transforming from empty to lived-in"]
+  speed: ["magical slow transition", "gentle reveal"]
+  motion_focus: "transformation, space potential realization"
+
+context:
+  environment: ["empty unfurnished room", "newly built or stripped interior"]
+  lighting_default: "flat empty lighting transforming to warm staged lighting"
+
+style:
+  visual: "photorealistic, interior catalog style, aspirational home styling"
+  mood: "transformative, inspirational, space potential, welcoming"
+  color_palette: "cohesive designer palette, warm inviting tones"
+
+audio:
+  ambience: "subtle ambient transformation whoosh, soft settling sounds"
+  music: "soft elegant piano, gentle acoustic"
+  negative_audio: "no dialogue, no voiceover, no energetic beats"
+
+negative: "blurry, distorted, deformed, low quality, watermark, text overlay, subtitle, cartoon, unrealistic furniture, floating objects, cluttered styling, cheap furniture, mismatched decor, empty room in final shot, dirty floors, construction dust, bare fixtures"
+
+duration: 5
+aspect_ratio: "16:9"
