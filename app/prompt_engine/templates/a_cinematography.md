@@ -9,10 +9,11 @@ INPUT:
 INSTRUCTIONS:
 1. Define the shot type: wide, medium, close-up, establishing
 2. Specify camera angle: eye-level, low-angle, high-angle, aerial, top-down
-3. Describe camera movement: static, dolly, pan, tilt, crane, orbit, tracking
-4. Specify lens and composition style
+3. Describe camera movement: static, dolly, pan, tilt, crane, orbit, tracking, glide
+4. Specify lens and composition style (e.g. 24mm wide-angle, 85mm portrait)
 5. If you define a specific camera position, use the phrase "(thats where the camera is)"
-6. Output a single text string ready to insert into the final prompt
+6. Write a VERY DETAILED, CINEMATIC paragraph. Include precise camera choreography.
+7. Describe how the camera transitions between shots throughout the video.
 
 OUTPUT FORMAT:
-A single paragraph of 1-3 sentences describing only the cinematography.
+A single detailed paragraph (3-6 sentences) describing only the cinematography. Be expansive and specific.

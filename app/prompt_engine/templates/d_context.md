@@ -7,11 +7,12 @@ INPUT:
 - user_intent: A short description of the desired video
 
 INSTRUCTIONS:
-1. Describe the environment in detail: location, surroundings, atmosphere
-2. Specify lighting: natural light, artificial, golden hour, studio, dramatic
+1. Describe the environment in rich detail: location, surroundings, atmosphere
+2. Specify lighting precisely: natural light, artificial, golden hour, studio, dramatic shadows, soft diffused
 3. Specify time of day and weather conditions
 4. Describe the mood and atmosphere created by the environment
-5. Output a single text string ready to insert into the final prompt
+5. Include spatial details: room dimensions, ceiling height, view through windows, landscape
+6. Write an ATMOSPHERIC, IMMERSIVE description that sets the complete scene
 
 OUTPUT FORMAT:
-A single paragraph of 1-3 sentences describing only the context and environment.
+A single detailed paragraph (3-6 sentences) describing only the context and environment. Be sensory and evocative.

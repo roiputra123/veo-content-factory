@@ -155,13 +155,13 @@ elif st.session_state.step == 3:
                 st.markdown(f"`Iter {it['iteration']}` {emoji} ⭐{s} — {it.get('feedback', '')[:40]}")
 
     st.markdown("---")
-    col_p, col_n = st.columns(2)
-    with col_p:
-        st.markdown("### Prompt Positif")
-        st.text_area("", result.get("positive", ""), height=200, key="positive_out")
-    with col_n:
-        st.markdown("### Prompt Negatif")
-        st.text_area("", result.get("negative", ""), height=200, key="negative_out")
+    prompt_pos = result.get("positive", "")
+    prompt_neg = result.get("negative", "")
+    st.markdown(f"**Prompt Positif** — `{len(prompt_pos)} karakter`")
+    st.code(prompt_pos, language="text", line_numbers=True)
+    if prompt_neg:
+        st.markdown(f"**Prompt Negatif** — `{len(prompt_neg)} karakter`")
+        st.code(prompt_neg, language="text", line_numbers=True)
 
     st.markdown("---")
     col_save, col_gen = st.columns(2)
