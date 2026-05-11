@@ -11,6 +11,7 @@ except ImportError:
 from prompt_engine.builder import PromptBuilder
 from prompt_engine.niche_loader import NicheLoader
 from prompt_engine.image_analyzer import ImageAnalyzer
+from llm_provider import LLMProvider
 
 try:
     from dotenv import load_dotenv
@@ -66,18 +67,25 @@ class PromptRefiner:
                     location=self.config["location"]
                 )
 
+        self.llm = None
+        provider = os.environ.get("LLM_PROVIDER", "gemini").lower()
+        if provider == "ollama":
+            self.llm = LLMProvider(provider="ollama")
+            self.demo_mode = False
+            if self.logger:
+                self.logger.info(f"Menggunakan Ollama: {self.llm.host} model={self.llm.model}")
+        elif not self.demo_mode:
             self.model_id = self.config.get("llm_model_id", "gemini-1.5-flash-002")
             self.model_id_pro = self.config.get("llm_model_id_pro", "gemini-1.5-pro-002")
-        else:
-            self.client = None
-            self.model_id = None
-            self.model_id_pro = None
 
         self.max_iterations = 3
 
     def call_llm(self, prompt, use_pro=False):
         if self.demo_mode:
             raise RuntimeError("DEMO_MODE")
+        if self.llm:
+            temperature = 0.1 if use_pro else 0.3
+            return self.llm.generate(prompt, temperature=temperature)
         response = self.client.models.generate_content(
             model=self.model_id_pro if use_pro else self.model_id,
             contents=prompt
@@ -178,7 +186,7 @@ PROMPT TO EVALUATE:
         best_negative = self._get_negative(niche_profile, image_analysis)
         current_feedback = "Initial generation"
 
-        iterations = 1 if self.demo_mode else self.max_iterations
+        iterations = 1 if (self.demo_mode or self.llm) else self.max_iterations
         for iteration in range(1, iterations + 1):
             if self.logger:
                 self.logger.info(f"{'[DEMO] ' if self.demo_mode else ''}Iterasi {iteration}...")
