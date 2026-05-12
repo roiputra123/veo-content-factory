@@ -363,6 +363,20 @@ PROMPT TO EVALUATE:
             niche_profile_for_update["feedback"] = feedback
             user_input += f"\nFeedback from previous iteration: {feedback}"
 
+        # Optional ID → EN conversion
+        if best_prompt and os.environ.get("ID_TO_EN", "").lower() in ("1", "true", "yes"):
+            try:
+                convert_template = self.builder.load_template("g_id_to_en.md")
+                convert_prompt = convert_template.replace("{id_prompt}", best_prompt)
+                en_prompt = self.call_llm(convert_prompt)
+                if en_prompt and len(en_prompt) > 100:
+                    if self.logger:
+                        self.logger.info(f"ID→EN: {len(best_prompt)} → {len(en_prompt)} chars")
+                    best_prompt = en_prompt.strip()
+            except Exception as e:
+                if self.logger:
+                    self.logger.warning(f"ID→EN conversion failed: {e}")
+
         result = self.builder.assemble_full(best_prompt, best_negative)
         result["score"] = best_score
         result["iterations"] = job_data["iterations"]

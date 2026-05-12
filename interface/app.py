@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.join(_BASE, "app"))
 from prompt_engine.niche_loader import NicheLoader
 from prompt_engine.refiner import PromptRefiner
 from core.logger import ProductionLogger
+from prompt_library import PromptLibrary
 
 st.set_page_config(page_title="Veo Content Factory", layout="wide", page_icon="🎬")
 
@@ -23,12 +24,39 @@ with st.sidebar:
         st.session_state.niche = None
         st.session_state.idea = ""
         st.session_state.result = None
+        st.session_state.edited_prompt = ""
         st.rerun()
     step_now = st.session_state.get("step", 1)
     labels = {1: "Pilih Niche", 2: "Input Ide", 3: "Hasil Prompt", 4: "Generate Video"}
     for s, label in labels.items():
         mark = "▸" if s == step_now else " "
         st.markdown(f"{mark} **Langkah {s}:** {label}")
+
+    st.markdown("---")
+    with st.expander("📚 Library Prompt", expanded=False):
+        lib = PromptLibrary()
+        niche_filter = st.selectbox("Filter niche", ["Semua"] + [n["name"] for n in niches], key="lib_filter")
+        if st.button("🔄 Muat Ulang", use_container_width=True):
+            st.rerun()
+        slug_filter = None
+        if niche_filter != "Semua":
+            slug_filter = next((n["slug"] for n in niches if n["name"] == niche_filter), None)
+        saved = lib.list(niche=slug_filter, limit=20)
+        if not saved:
+            st.caption("Belum ada prompt tersimpan")
+        for e in saved[:10]:
+            label = f"⭐{e['score']} {e['user_input'][:30]}"
+            if st.button(label, use_container_width=True, key=f"lib_{e['id']}"):
+                st.session_state.result = {
+                    "positive": e["positive"],
+                    "negative": e["negative"],
+                    "score": e["score"],
+                    "iterations": e.get("iterations", []),
+                }
+                st.session_state.niche = e["niche"]
+                st.session_state.edited_prompt = e["positive"]
+                st.session_state.step = 3
+                st.rerun()
 
 st.markdown("---")
 
@@ -38,6 +66,9 @@ if "step" not in st.session_state:
     st.session_state.idea = ""
     st.session_state.result = None
     st.session_state.log = []
+    st.session_state.edited_prompt = ""
+    st.session_state.parent_id = None
+    st.session_state.parent_context = None
 
 niche_loader = NicheLoader()
 niches = niche_loader.list_niche_names()
@@ -63,14 +94,23 @@ if st.session_state.step == 1:
 elif st.session_state.step == 2:
     profile = niche_loader.load(st.session_state.niche)
     st.markdown(f"## {profile['name']}")
+
+    # Show continuation context if coming from "Lanjutkan Cerita"
+    if st.session_state.parent_context:
+        ctx = st.session_state.parent_context
+        st.info(f"⏩ **Melanjutkan cerita dari:**\n_{ctx['previous_idea']}_")
+        with st.expander("Lihat prompt sebelumnya"):
+            st.code(ctx['previous_prompt'][:300] + ("..." if len(ctx['previous_prompt']) > 300 else ""), language="text")
+
     st.markdown("---")
 
     col1, col2 = st.columns([3, 2])
 
     with col1:
+        placeholder = "Lanjutkan: " if st.session_state.parent_context else "Contoh: rumah mewah modern 2 lantai, kolam renang, taman minimalis..."
         idea = st.text_area(
             "Deskripsi Ide",
-            placeholder="Contoh: rumah mewah modern 2 lantai, kolam renang, taman minimalis...",
+            placeholder=placeholder,
             height=120,
         )
 
@@ -112,6 +152,9 @@ elif st.session_state.step == 2:
 
 # --- LANGKAH 3: HASIL PROMPT ---
 elif st.session_state.step == 3:
+    lib = PromptLibrary()
+    need_save = False
+
     if st.session_state.result is None:
         with st.spinner("Memperhalus prompt dengan LLM..."):
             try:
@@ -128,16 +171,20 @@ elif st.session_state.step == 3:
                     image_path=img_path,
                 )
                 st.session_state.result = result
+                st.session_state.edited_prompt = result.get("positive", "")
                 log(f"✅ Prompt selesai — skor: {result.get('score', 'N/A')}/10")
+                need_save = True
             except Exception as e:
                 st.error(f"Gagal: {e}")
                 st.session_state.result = {"positive": "Error", "negative": "", "score": 0}
+                st.session_state.edited_prompt = ""
 
     result = st.session_state.result
     score = result.get("score", 0)
 
-    st.markdown("## Hasil Prompt")
+    st.markdown(f"## Hasil Prompt — {st.session_state.niche}")
 
+    # Score + Iterations
     col_score, col_iter = st.columns([1, 3])
     with col_score:
         val = score / 10 if score else 0
@@ -155,30 +202,82 @@ elif st.session_state.step == 3:
                 st.markdown(f"`Iter {it['iteration']}` {emoji} ⭐{s} — {it.get('feedback', '')[:40]}")
 
     st.markdown("---")
-    prompt_pos = result.get("positive", "")
+
+    # Editable prompt
+    prompt_pos = st.session_state.edited_prompt or result.get("positive", "")
     prompt_neg = result.get("negative", "")
-    st.markdown(f"**Prompt Positif** — `{len(prompt_pos)} karakter`")
-    st.code(prompt_pos, language="text", line_numbers=True)
+
+    st.markdown(f"**Edit Prompt Positif** — `{len(prompt_pos)} karakter`")
+    edited = st.text_area("", prompt_pos, height=200, key="editor_prompt")
+    st.session_state.edited_prompt = edited
+
     if prompt_neg:
-        st.markdown(f"**Prompt Negatif** — `{len(prompt_neg)} karakter`")
+        st.markdown(f"**Prompt Negatif**")
         st.code(prompt_neg, language="text", line_numbers=True)
 
     st.markdown("---")
-    col_save, col_gen = st.columns(2)
-    with col_save:
-        if st.button("💾 Simpan Prompt", use_container_width=True):
-            ts = __import__("datetime").datetime.now().strftime("%Y%m%d_%H%M%S")
-            outdir = os.path.join("..", "docs", "prompts")
-            os.makedirs(outdir, exist_ok=True)
-            path = os.path.join(outdir, f"prompt_{st.session_state.niche}_{ts}.json")
-            with open(path, "w") as f:
-                json.dump(result, f, indent=2)
-            st.success(f"Tersimpan: {path}")
-    with col_gen:
-        if st.button("▶ Generate Video (Veo)", type="primary", use_container_width=True):
+
+    # Action buttons
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        if st.button("💾 Simpan Revisi", use_container_width=True):
+            pid = lib.save({
+                "niche": st.session_state.niche,
+                "user_input": st.session_state.idea,
+                "positive": st.session_state.edited_prompt,
+                "negative": prompt_neg,
+                "score": score,
+                "feedback": fb,
+                "iterations": iters,
+                "parent_id": st.session_state.parent_id,
+            })
+            st.session_state.parent_id = pid
+            st.success(f"✅ Tersimpan (ID: {pid[:8]}...)")
+    with col2:
+        if st.button("🔄 Generate Ulang", use_container_width=True):
+            st.session_state.result = None
+            st.session_state.edited_prompt = ""
+            st.rerun()
+    with col3:
+        if st.button("⏩ Lanjutkan Cerita", use_container_width=True):
+            pid = lib.save({
+                "niche": st.session_state.niche,
+                "user_input": st.session_state.idea,
+                "positive": st.session_state.edited_prompt,
+                "negative": prompt_neg,
+                "score": score,
+                "feedback": fb,
+                "iterations": iters,
+                "parent_id": st.session_state.parent_id,
+            })
+            st.session_state.parent_id = pid
+            st.session_state.parent_context = {
+                "niche": st.session_state.niche,
+                "previous_prompt": st.session_state.edited_prompt,
+                "previous_idea": st.session_state.idea,
+            }
+            st.session_state.step = 2
+            st.rerun()
+    with col4:
+        if st.button("▶ Generate Video", type="primary", use_container_width=True):
             st.session_state.step = 4
             st.rerun()
 
+    # Auto-save first result to library
+    if need_save and score > 0 and edited:
+        pid = lib.save({
+            "niche": st.session_state.niche,
+            "user_input": st.session_state.idea,
+            "positive": edited,
+            "negative": prompt_neg,
+            "score": score,
+            "feedback": fb,
+            "iterations": iters,
+            "parent_id": st.session_state.parent_id,
+        })
+        st.session_state.parent_id = pid
+
+    st.markdown("---")
     col_back1, col_back2 = st.columns(2)
     with col_back1:
         if st.button("← Kembali ke Input", use_container_width=True):
@@ -187,6 +286,7 @@ elif st.session_state.step == 3:
     with col_back2:
         if st.button("🏠 Beranda", use_container_width=True):
             st.session_state.step = 1
+            st.session_state.parent_context = None
             st.rerun()
 
 # --- LANGKAH 4: GENERATE VIDEO ---

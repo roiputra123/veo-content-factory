@@ -3,8 +3,8 @@
 !configs/.gitkeep
 
 # Runtime Data
-storage/registry/
-storage/results/
+storage/
+!storage/.gitkeep
 __pycache__/
 *.pyc
 
