@@ -227,10 +227,9 @@ elif st.session_state.step == 3:
                     st.session_state.id_markdown = id_md
                 except Exception as e:
                     st.error(f"Gagal: {e}")
-        st.rerun()
-    if id_md:
+    if st.session_state.get("id_markdown"):
         with st.expander("🇮🇩 Bahasa Indonesia (markdown)", expanded=True):
-            st.markdown(id_md)
+            st.markdown(st.session_state.id_markdown)
 
     # --- FEEDBACK MANUAL ---
     st.markdown("---")
