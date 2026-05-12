@@ -51,6 +51,7 @@ with st.sidebar:
         st.session_state.edited_prompt = ""
         st.session_state.show_en = False
         st.session_state.id_markdown = ""
+        st.session_state.edit_mode = False
         st.rerun()
     step_now = st.session_state.get("step", 1)
     labels = {1: "Pilih Niche", 2: "Input Ide", 3: "Hasil Prompt", 4: "Generate Video"}
@@ -97,6 +98,7 @@ if "step" not in st.session_state:
     st.session_state.parent_context = None
     st.session_state.show_en = False
     st.session_state.id_markdown = ""
+    st.session_state.edit_mode = False
 
 def log(msg):
     st.session_state.log.append(msg)
@@ -190,8 +192,10 @@ elif st.session_state.step == 3:
                     tmp.write(st.session_state.ref_image.getvalue())
                     img_path = tmp.name
 
+                aspect = st.session_state.get("aspect", "16:9")
+                enriched_input = f"{st.session_state.idea} (format video: {aspect})"
                 result = refiner.refine_prompt(
-                    user_input=st.session_state.idea,
+                    user_input=enriched_input,
                     niche_slug=st.session_state.niche,
                     image_path=img_path,
                 )
@@ -229,14 +233,27 @@ elif st.session_state.step == 3:
 
     st.markdown("---")
 
-    # --- PROMPT INGGRIS (default, bisa diedit) ---
+    # --- PROMPT INGGRIS (default: code view dengan copy button) ---
     prompt_en = st.session_state.edited_prompt or result.get("positive", "")
     prompt_neg = result.get("negative", "")
+    edit_mode = st.session_state.get("edit_mode", False)
 
     st.markdown(f"### 🇬🇧 Prompt Inggris (untuk Veo 3) — `{len(prompt_en)} karakter`")
-    st.caption("Edit langsung prompt di bawah ini jika ada yang ingin diubah.")
-    edited = st.text_area("", prompt_en, height=200, key="editor_prompt", label_visibility="collapsed")
-    st.session_state.edited_prompt = edited
+
+    col_view, col_copy = st.columns([1, 4])
+    with col_view:
+        label = "✏️ Edit" if not edit_mode else "📋 Lihat"
+        if st.button(label, use_container_width=True):
+            st.session_state.edit_mode = not edit_mode
+            st.rerun()
+
+    if edit_mode:
+        edited = st.text_area("", prompt_en, height=200, key="editor_prompt", label_visibility="collapsed")
+        st.session_state.edited_prompt = edited
+    else:
+        st.code(prompt_en, language="text", line_numbers=True)
+        st.session_state.edited_prompt = prompt_en
+        edited = prompt_en
 
     # --- TOMBOL BACA BAHASA INDONESIA ---
     id_md = st.session_state.get("id_markdown", "")
@@ -280,6 +297,7 @@ elif st.session_state.step == 3:
                 st.session_state.result = None
                 st.session_state.edited_prompt = ""
                 st.session_state.id_markdown = ""
+                st.session_state.edit_mode = False
                 st.rerun()
             else:
                 st.warning("Tulis feedback terlebih dahulu")
@@ -312,6 +330,7 @@ elif st.session_state.step == 3:
             st.session_state.result = None
             st.session_state.edited_prompt = ""
             st.session_state.id_markdown = ""
+            st.session_state.edit_mode = False
             st.rerun()
     with col3:
         if st.button("⏩ Lanjutkan Cerita", use_container_width=True):
