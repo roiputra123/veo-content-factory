@@ -175,6 +175,7 @@ elif st.session_state.step == 3:
                     image_path=img_path,
                 )
                 st.session_state.result = result
+                st.session_state.refiner = refiner
                 st.session_state.edited_prompt = result.get("positive", "")
                 log(f"✅ Prompt selesai — skor: {result.get('score', 'N/A')}/10")
                 need_save = True
@@ -220,10 +221,12 @@ elif st.session_state.step == 3:
     id_md = st.session_state.get("id_markdown", "")
     if st.button("🇮🇩 Baca Bahasa Indonesia", use_container_width=True, type="secondary"):
         if not id_md:
+            refiner = st.session_state.get("refiner")
+            if not refiner:
+                refiner = PromptRefiner(logger=ProductionLogger())
             with st.spinner("Menerjemahkan ke Indonesia..."):
                 try:
-                    converter = PromptRefiner(logger=ProductionLogger())
-                    id_md = converter._convert_to_id_markdown(edited)
+                    id_md = refiner._convert_to_id_markdown(edited)
                     st.session_state.id_markdown = id_md
                 except Exception as e:
                     st.error(f"Gagal: {e}")
