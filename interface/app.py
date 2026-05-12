@@ -29,6 +29,7 @@ with st.sidebar:
         st.session_state.result = None
         st.session_state.edited_prompt = ""
         st.session_state.show_en = False
+        st.session_state.id_markdown = ""
         st.rerun()
     step_now = st.session_state.get("step", 1)
     labels = {1: "Pilih Niche", 2: "Input Ide", 3: "Hasil Prompt", 4: "Generate Video"}
@@ -74,6 +75,7 @@ if "step" not in st.session_state:
     st.session_state.parent_id = None
     st.session_state.parent_context = None
     st.session_state.show_en = False
+    st.session_state.id_markdown = ""
 
 def log(msg):
     st.session_state.log.append(msg)
@@ -205,60 +207,66 @@ elif st.session_state.step == 3:
 
     st.markdown("---")
 
-    # Language toggle
-    lang = result.get("lang", "id")
-    has_en = bool(result.get("positive_en"))
-    show_en = st.session_state.get("show_en", False)
-
-    prompt_pos = st.session_state.edited_prompt or result.get("positive", "")
+    # --- PROMPT INGGRIS (default, bisa diedit) ---
+    prompt_en = st.session_state.edited_prompt or result.get("positive", "")
     prompt_neg = result.get("negative", "")
 
-    if show_en and has_en:
-        # Show English version
-        prompt_en = result.get("positive_en", "")
-        st.markdown(f"### 🇬🇧 Prompt Inggris (untuk Veo 3) — `{len(prompt_en)} karakter`")
-        edited = st.text_area("", prompt_en, height=200, key="editor_prompt")
-        st.session_state.edited_prompt = edited
-        st.caption("Prompt ini yang akan dikirim ke Veo 3. Edit jika perlu.")
-        if st.button("🇮🇩 Kembali ke Bahasa Indonesia", use_container_width=True):
-            st.session_state.show_en = False
-            st.rerun()
-    else:
-        # Show Indonesian version
-        lang_label = "🇮🇩" if lang == "id" else "🇬🇧"
-        st.markdown(f"### {lang_label} Edit Prompt ({lang.upper()}) — `{len(prompt_pos)} karakter`")
-        edited = st.text_area("", prompt_pos, height=200, key="editor_prompt")
-        st.session_state.edited_prompt = edited
+    st.markdown(f"### 🇬🇧 Prompt Inggris (untuk Veo 3) — `{len(prompt_en)} karakter`")
+    st.caption("Edit langsung prompt di bawah ini jika ada yang ingin diubah.")
+    edited = st.text_area("", prompt_en, height=200, key="editor_prompt", label_visibility="collapsed")
+    st.session_state.edited_prompt = edited
 
-        if lang == "id" and not has_en:
-            if st.button("🌐 Convert ke Inggris", use_container_width=True, type="secondary"):
-                with st.spinner("Menerjemahkan ke Inggris..."):
-                    try:
-                        converter = PromptRefiner(logger=ProductionLogger())
-                        en_result = converter._convert_to_english(edited)
-                        result["positive_en"] = en_result
-                        st.session_state.show_en = True
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"Gagal convert: {e}")
-        elif has_en:
-            st.caption("Prompt dalam Bahasa Indonesia. Klik tombol convert untuk lihat versi Inggris.")
+    # --- TOMBOL BACA BAHASA INDONESIA ---
+    id_md = st.session_state.get("id_markdown", "")
+    if st.button("🇮🇩 Baca Bahasa Indonesia", use_container_width=True, type="secondary"):
+        if not id_md:
+            with st.spinner("Menerjemahkan ke Indonesia..."):
+                try:
+                    converter = PromptRefiner(logger=ProductionLogger())
+                    id_md = converter._convert_to_id_markdown(edited)
+                    st.session_state.id_markdown = id_md
+                except Exception as e:
+                    st.error(f"Gagal: {e}")
+        st.rerun()
+    if id_md:
+        with st.expander("🇮🇩 Bahasa Indonesia (markdown)", expanded=True):
+            st.markdown(id_md)
 
+    # --- FEEDBACK MANUAL ---
+    st.markdown("---")
+    st.markdown("### ✍️ Masukan Manual untuk Iterasi")
+    manual_feedback = st.text_area(
+        "Feedback untuk perbaikan prompt",
+        placeholder="Contoh: ganti ke drone shot, tambah detail kolam renang, pakai nuansa golden hour...",
+        height=80, key="manual_feedback"
+    )
+    col_fb1, col_fb2 = st.columns([1, 3])
+    with col_fb1:
+        if st.button("🚀 Generate Ulang dengan Feedback", use_container_width=True, type="primary"):
+            if manual_feedback.strip():
+                st.session_state.idea += f"\nFeedback: {manual_feedback}"
+                st.session_state.result = None
+                st.session_state.edited_prompt = ""
+                st.session_state.id_markdown = ""
+                st.rerun()
+            else:
+                st.warning("Tulis feedback terlebih dahulu")
+
+    # --- PROMPT NEGATIF ---
     if prompt_neg:
         st.markdown(f"**Prompt Negatif**")
         st.code(prompt_neg, language="text", line_numbers=True)
 
     st.markdown("---")
 
-    # Action buttons
+    # --- ACTION BUTTONS ---
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         if st.button("💾 Simpan Revisi", use_container_width=True):
-            save_prompt = result.get("positive_en", edited) if show_en else edited
             pid = lib.save({
                 "niche": st.session_state.niche,
                 "user_input": st.session_state.idea,
-                "positive": save_prompt,
+                "positive": edited,
                 "negative": prompt_neg,
                 "score": score,
                 "feedback": fb,
@@ -271,7 +279,7 @@ elif st.session_state.step == 3:
         if st.button("🔄 Generate Ulang", use_container_width=True):
             st.session_state.result = None
             st.session_state.edited_prompt = ""
-            st.session_state.show_en = False
+            st.session_state.id_markdown = ""
             st.rerun()
     with col3:
         if st.button("⏩ Lanjutkan Cerita", use_container_width=True):
