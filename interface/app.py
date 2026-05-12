@@ -408,6 +408,7 @@ elif st.session_state.step == 4:
                 veo.model_id = veo.config["model_ids"][mode]
                 veo.default_config["generate_audio"] = (audio == "Ya")
                 veo.default_config["duration_seconds"] = dur
+                veo.default_config["aspect_ratio"] = st.session_state.get("aspect", "16:9")
 
                 out = f"storage/results/video_{int(__import__('time').time())}.mp4"
                 img_path = None
