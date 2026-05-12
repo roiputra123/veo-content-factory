@@ -17,6 +17,9 @@ st.set_page_config(page_title="Veo Content Factory", layout="wide", page_icon="�
 
 st.title("🎬 Veo Content Factory")
 
+niche_loader = NicheLoader()
+niches = niche_loader.list_niche_names()
+
 with st.sidebar:
     st.markdown("### 🧭 Navigasi")
     if st.button("🏠 Beranda", use_container_width=True):
@@ -69,9 +72,6 @@ if "step" not in st.session_state:
     st.session_state.edited_prompt = ""
     st.session_state.parent_id = None
     st.session_state.parent_context = None
-
-niche_loader = NicheLoader()
-niches = niche_loader.list_niche_names()
 
 def log(msg):
     st.session_state.log.append(msg)
