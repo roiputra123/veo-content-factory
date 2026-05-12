@@ -14,6 +14,10 @@ INSTRUCTIONS:
 5. If you define a specific camera position, use the phrase "(thats where the camera is)"
 6. Write a VERY DETAILED, CINEMATIC paragraph. Include precise camera choreography.
 7. Describe how the camera transitions between shots throughout the video.
+8. Consider aspect ratio from USER INTENT (e.g. 9:16, 16:9, 1:1):
+   - **9:16 (vertical)**: portrait framing, center composition, shallow depth, subject-focused
+   - **16:9 (horizontal)**: cinematic widescreen, leading lines, rule of thirds, landscape
+   - **1:1 (square)**: balanced symmetrical composition, centered subject
 
 OUTPUT FORMAT:
 A single detailed paragraph (3-6 sentences) describing only the cinematography. Be expansive and specific.

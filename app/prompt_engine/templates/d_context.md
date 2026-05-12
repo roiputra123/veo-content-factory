@@ -13,6 +13,7 @@ INSTRUCTIONS:
 4. Describe the mood and atmosphere created by the environment
 5. Include spatial details: room dimensions, ceiling height, view through windows, landscape
 6. Write an ATMOSPHERIC, IMMERSIVE description that sets the complete scene
+7. Consider aspect ratio: 9:16 emphasize vertical (tall windows, ceiling); 16:9 emphasize horizontal (room width, views); 1:1 balanced depth
 
 OUTPUT FORMAT:
 A single detailed paragraph (3-6 sentences) describing only the context and environment. Be sensory and evocative.
