@@ -53,6 +53,8 @@ class PromptRefiner:
             self.logger.info("DEMO MODE — tanpa LLM, menggunakan template langsung")
 
         self.max_iterations = int(os.environ.get("LLM_ITERATIONS", "3"))
+        self.lang = os.environ.get("LANG", "id").lower()
+        self.id_to_en = os.environ.get("ID_TO_EN", "true" if self.lang == "id" else "false").lower() in ("1", "true", "yes")
 
     def _try_init_providers(self):
         provider = os.environ.get("LLM_PROVIDER", "").lower()
@@ -243,13 +245,23 @@ class PromptRefiner:
         if has_ref:
             ref_hint = f"\n\nIMAGE ANALYSIS (do not redescribe these): {json.dumps(image_analysis.get('do_not_redescribe', []))}\nSUGGESTED MOTION: {json.dumps(image_analysis.get('suggested_motion', []))}"
 
-        prompt = f"""{template}
+        lang_hint = "\n\nIMPORTANT: Respond in Bahasa Indonesia. Use rich Indonesian vocabulary for architectural and visual details."
+        if self.lang == "en":
+            lang_hint = "\n\nIMPORTANT: Respond in English. Use precise English cinematography terminology."
+
+        prompt = f"""{template}{lang_hint}
 
 NICHE PROFILE:
 {json.dumps(niche_profile, indent=2)}
 
 USER INTENT: {user_input}{ref_hint}"""
         return self.call_llm(prompt)
+
+    def _convert_to_english(self, prompt_text):
+        convert_template = self.builder.load_template("g_id_to_en.md")
+        convert_prompt = convert_template.replace("{id_prompt}", prompt_text)
+        en_prompt = self.call_llm(convert_prompt)
+        return en_prompt.strip() if en_prompt and len(en_prompt) > 100 else prompt_text
 
     def _evaluate_prompt(self, assembled_prompt, use_pro=True):
         if self.demo_mode:
@@ -363,16 +375,13 @@ PROMPT TO EVALUATE:
             niche_profile_for_update["feedback"] = feedback
             user_input += f"\nFeedback from previous iteration: {feedback}"
 
-        # Optional ID → EN conversion
-        if best_prompt and os.environ.get("ID_TO_EN", "").lower() in ("1", "true", "yes"):
+        # ID → EN conversion (convert Indonesian prompt to English for Veo 3)
+        if best_prompt and self.id_to_en:
             try:
-                convert_template = self.builder.load_template("g_id_to_en.md")
-                convert_prompt = convert_template.replace("{id_prompt}", best_prompt)
-                en_prompt = self.call_llm(convert_prompt)
-                if en_prompt and len(en_prompt) > 100:
-                    if self.logger:
-                        self.logger.info(f"ID→EN: {len(best_prompt)} → {len(en_prompt)} chars")
-                    best_prompt = en_prompt.strip()
+                en_prompt = self._convert_to_english(best_prompt)
+                if self.logger:
+                    self.logger.info(f"ID→EN: {len(best_prompt)} → {len(en_prompt)} chars")
+                best_prompt = en_prompt
             except Exception as e:
                 if self.logger:
                     self.logger.warning(f"ID→EN conversion failed: {e}")
