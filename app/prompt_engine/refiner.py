@@ -53,7 +53,7 @@ class PromptRefiner:
             self.logger.info("DEMO MODE — tanpa LLM, menggunakan template langsung")
 
         self.max_iterations = int(os.environ.get("LLM_ITERATIONS", "3"))
-        self.lang = os.environ.get("LANG", "id").lower()
+        self.lang = os.environ.get("APP_LANG", "id").lower()
         self.id_to_en = os.environ.get("ID_TO_EN", "true" if self.lang == "id" else "false").lower() in ("1", "true", "yes")
 
     def _try_init_providers(self):
