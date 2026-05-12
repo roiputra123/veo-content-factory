@@ -375,20 +375,21 @@ PROMPT TO EVALUATE:
             niche_profile_for_update["feedback"] = feedback
             user_input += f"\nFeedback from previous iteration: {feedback}"
 
-        # ID → EN conversion (convert Indonesian prompt to English for Veo 3)
+        result = self.builder.assemble_full(best_prompt, best_negative)
+        result["score"] = best_score
+        result["iterations"] = job_data["iterations"]
+
+        # Store Indonesian version + optionally convert to English
+        result["lang"] = self.lang
         if best_prompt and self.id_to_en:
             try:
                 en_prompt = self._convert_to_english(best_prompt)
                 if self.logger:
                     self.logger.info(f"ID→EN: {len(best_prompt)} → {len(en_prompt)} chars")
-                best_prompt = en_prompt
+                result["positive_en"] = en_prompt
             except Exception as e:
                 if self.logger:
                     self.logger.warning(f"ID→EN conversion failed: {e}")
-
-        result = self.builder.assemble_full(best_prompt, best_negative)
-        result["score"] = best_score
-        result["iterations"] = job_data["iterations"]
 
         if self.logger:
             job_id = self.logger.log_job({
