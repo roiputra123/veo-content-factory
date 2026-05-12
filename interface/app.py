@@ -10,6 +10,7 @@ sys.path.insert(0, os.path.join(_BASE, "app"))
 
 from prompt_engine.niche_loader import NicheLoader
 from prompt_engine.refiner import PromptRefiner
+from prompt_engine.builder import PromptBuilder
 from core.logger import ProductionLogger
 from prompt_library import PromptLibrary
 
@@ -226,7 +227,14 @@ elif st.session_state.step == 3:
                 refiner = PromptRefiner(logger=ProductionLogger())
             with st.spinner("Menerjemahkan ke Indonesia..."):
                 try:
-                    id_md = refiner._convert_to_id_markdown(edited)
+                    builder = PromptBuilder()
+                    tpl = builder.load_template("g_en_to_id.md")
+                    convert_prompt = tpl.replace("{en_prompt}", edited)
+                    id_md = refiner.call_llm(convert_prompt)
+                    if id_md and len(id_md.strip()) > 100:
+                        id_md = id_md.strip()
+                    else:
+                        id_md = edited
                     st.session_state.id_markdown = id_md
                 except Exception as e:
                     st.error(f"Gagal: {e}")
