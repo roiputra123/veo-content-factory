@@ -16,6 +16,26 @@ from prompt_library import PromptLibrary
 
 st.set_page_config(page_title="Veo Content Factory", layout="wide", page_icon="🎬")
 
+st.markdown("""
+<style>
+    .stMarkdown, .stMarkdown p, .stMarkdown li {
+        word-wrap: break-word !important;
+        white-space: pre-wrap !important;
+        overflow-wrap: break-word !important;
+        max-width: 100% !important;
+    }
+    .stMarkdown code {
+        word-wrap: break-word !important;
+        white-space: pre-wrap !important;
+    }
+    .main .block-container {
+        max-width: 100%;
+        padding-left: 3rem;
+        padding-right: 3rem;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 st.title("🎬 Veo Content Factory")
 
 niche_loader = NicheLoader()
@@ -240,7 +260,9 @@ elif st.session_state.step == 3:
                     st.error(f"Gagal: {e}")
     if st.session_state.get("id_markdown"):
         with st.expander("🇮🇩 Bahasa Indonesia (markdown)", expanded=True):
-            st.markdown(st.session_state.id_markdown)
+            md_content = st.session_state.id_markdown
+            md_content = md_content.replace("```markdown", "").replace("```", "")
+            st.markdown(md_content)
 
     # --- FEEDBACK MANUAL ---
     st.markdown("---")
